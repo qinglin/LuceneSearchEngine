@@ -1,0 +1,17 @@
+package src.ir.assignments.three;
+
+import java.util.Comparator;
+
+
+public class SubdomainComparator implements Comparator<Subdomain>{
+
+
+	@Override
+	public int compare(Subdomain s1, Subdomain s2) {
+		int result = 0;
+		// sorting the urls alphabetically . 
+			result = s1.getURL().compareTo(s2.getURL());
+		return result;
+	}
+
+}
