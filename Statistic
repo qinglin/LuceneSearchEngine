@@ -1,0 +1,118 @@
+package src.ir.assignments.three;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
+// having this class saving the statics data and print them out. 
+public class Statistic {
+	private long totalTime;
+	private long totalUniqueURLs;
+	private int numberOfSubdomains;
+	private long longestPage;
+	private Map<String, Subdomain> subdomains; 
+	private Set<String>  urls; 
+	private Set<String> uniqueURLs;
+	private Set<String> stopWords;
+	private String content;
+	
+	// constructors 
+	public Statistic() {
+		longestPage = 0; 
+		subdomains = new HashMap<String, Subdomain>();
+		urls = new HashSet<String>();
+		uniqueURLs = new HashSet<String>();
+		stopWords = new HashSet<String>();
+		content = "";
+	}
+	
+	// getters 
+	public long getTotalTime()
+	{
+		return totalTime;
+	}
+	public long getTotalUniqueURLs()
+	{
+		return totalUniqueURLs;
+	}
+	public Map<String, Subdomain> getSubdomains() 
+	{
+		return subdomains; 
+	}
+	public int getnumberOfSubdomains()
+	{
+		numberOfSubdomains = subdomains.size();
+		return numberOfSubdomains;
+	}
+	public long getLongestPage()
+	{
+		return longestPage;
+	}
+	public Set<String> getUniqueURLs()
+	{
+		return uniqueURLs;
+	}
+	public Set<String> getURLs()
+	{
+		return urls; 
+	}
+	public Set<String> getStopWords(String filename) throws FileNotFoundException
+	{
+		FileReader input = new FileReader(filename);
+		Scanner s = new Scanner(input);
+		while(s.hasNext())
+		{
+			stopWords.add(s.next());
+		}
+		return stopWords;
+	}
+	public String getDomainContent()
+	{
+		return content;
+	}
+	// setters 
+	public void addDomainContent(String s)
+	{
+		content += " "+ s;
+	}
+	public void increUniqueURL()
+	{
+		this.totalUniqueURLs++;
+	}
+	public void addUniqueURL(String url)
+	{
+		uniqueURLs.add(url);
+	}
+	public void setTotalTime(long time)
+	{
+		totalTime = time;
+	}
+	public void setTotalUniqueURLs(long urls)
+	{
+		totalUniqueURLs = urls;
+	}
+	public void setLongestPage(long page)
+	{
+		this.longestPage = page;
+	}
+	public void addSubdomain(String url, Subdomain domain)
+	{
+		subdomains.put(url, domain);
+	}
+	public void print()
+	{
+		System.out.println("The Statistic Answers of the Crawler Results are shown as the followings: ");
+		System.out.println("The total time spent for crawling the domain is: "+ this.totalTime);
+		System.out.println("The total number of unique pages in the entire domain is: " + this.totalUniqueURLs);
+		System.out.println("The number of subdomains in the entire domain is: "+ this.numberOfSubdomains);
+		System.out.println("The subdomains are: ");
+		for(Subdomain domain: subdomains.values())
+		{
+			System.out.println(domain.getURL()+","+ domain.getNumber());
+		}
+	}
+
+}
