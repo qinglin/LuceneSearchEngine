@@ -1,0 +1,128 @@
+/*Authors: Patricia Chin, Qinglin, Xia
+
+Some code was borrowed from http://code.google.com/p/crawler4j/ ©Yasser Ganjisaffar
+*/
+
+package src.ir.assignments.three;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import assignment1.Frequency;
+import assignment1.TwoGramFrequencyCounter;
+import assignment1.Utilities;
+
+import edu.uci.ics.crawler4j.crawler.*;
+import edu.uci.ics.crawler4j.parser.HtmlParseData;
+import edu.uci.ics.crawler4j.url.WebURL;
+
+public class Crawler extends WebCrawler {
+	/**
+	 * This method is for testing purposes only. It does not need to be used
+	 * to answer any of the questions in the assignment. However, it must
+	 * function as specified so that your crawler can be verified programatically.
+	 * 
+	 * This methods performs a crawl starting at the specified seed URL. Returns a
+	 * collection containing all URLs visited during the crawl.
+	 */
+	
+	// create a Statistic to store crawler information (e.g. total time to crawl a domain, total unique URLs, etc.)
+	private Statistic crawlerStatistic = new Statistic(); 
+	
+	private final static Pattern FILTERS = Pattern.compile(".*(\\.(css|js|bmp|gif|jpe?g" + "|png|tiff?|mid|mp2|mp3|mp4"
+            + "|wav|avi|mov|mpeg|ram|m4v|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
+	private final static Pattern DOMAINS = Pattern.compile("^(http://(www\\.)?).*(ics\\.uci\\.edu/).*"); 
+	
+	public static Collection<String> crawl(String seedURL) {
+		// TODO implement me
+		
+		return null;
+	}
+	
+	// This function is called by controller to get the local data of this
+    // crawler when job is finished
+    @Override
+    public Object getMyLocalData() {
+            return crawlerStatistic;
+    }
+	
+    // This function is called by controller when starting the job.
+    @Override
+    public void onStart() {
+    	// start the timer 
+    	crawlerStatistic.setTotalTime(System.currentTimeMillis());    	
+    }
+    
+    // This function is called by controller before finishing the job.
+    @Override
+    public void onBeforeExit() {
+    	// stop the timer 
+    	crawlerStatistic.setTotalTime(System.currentTimeMillis() - crawlerStatistic.getTotalTime()); 
+    }
+    
+	/**
+     * 
+     */
+
+    @Override
+    public boolean shouldVisit(WebURL url) {
+        String href = url.getURL().toLowerCase();
+        return !FILTERS.matcher(href).matches() && DOMAINS.matcher(href).matches() && 
+        		 !href.contains("php") && !href.contains("pvm") &&!href.contains("pfm")&&!href.contains("ftp")&&
+        		 !href.contains("download") && !href.contains("rpm")&&!crawlerStatistic.getURLs().contains(url)
+        		 && !href.contains("?");
+}
+
+    /**
+     * This function is called when a page is fetched and ready 
+     * to be processed by your program.
+     */
+    @Override
+    public void visit(Page page) {          
+            String url = page.getWebURL().getURL();
+            String domain = page.getWebURL().getDomain(); 
+            String subDomain = "http://" + page.getWebURL().getSubDomain() + "." + domain;
+            System.out.println("URL: " + url);
+            System.out.println("Subdomain: " + subDomain);                                   
+      
+            if (page.getParseData() instanceof HtmlParseData) {
+                HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
+                String text = htmlParseData.getText();
+
+                // get the subdomain and add it to the crawled list of subdomains
+                if (crawlerStatistic.getSubdomains().keySet().contains(subDomain))
+                {
+                	crawlerStatistic.getSubdomains().get(subDomain).incrementNumOfURL(); 
+                }
+                else 
+                {
+                	// put new string and subdomain key-value pair into the subdomain map 
+                	crawlerStatistic.getSubdomains().put(subDomain, new Subdomain(subDomain, 1)); 
+                }
+                
+                // if the url is unique, increment the number of unique urls
+                if (!crawlerStatistic.getURLs().contains(url))
+                {
+                	crawlerStatistic.increUniqueURL(); 
+                	crawlerStatistic.addUniqueURL(url);
+                }
+                //save the text content into a string 
+                crawlerStatistic.addDomainContent(text);
+                
+                
+                // if current length of page is longer than longest page then set longest page to 
+                // current length 
+                if (text.length() > crawlerStatistic.getLongestPage())
+                {
+                	crawlerStatistic.setLongestPage(text.length()); 
+                }
+             
+            }
+                
+    }
+
+}
