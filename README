@@ -1,7 +1,0 @@
-Team Member: Patricia Chin, Qinglin,Xia
-
-○	Built a web crawler using the crawler4j API for crawling the domain of www.ics.uci.edu.
-○	Created an index for the crawled web pages using Apache Lucene, and implemented the querying and scoring of the search engine, utilizing the TF-IDF and scoring formula of Lucene.
-○	Designed a UI and integrated it with the search engine using the NetBeans IDE 7.3.
- 
-For the web crawler, We assumed that only html pages are processed. We do this to only retrieve tokens on HTML-parseable sites. 
